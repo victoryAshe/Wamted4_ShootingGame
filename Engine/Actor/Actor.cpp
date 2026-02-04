@@ -1,6 +1,7 @@
 #include "Actor.h"
 #include "Util/Util.h"
 #include "Render/Renderer.h"
+#include "Engine/Engine.h"
 
 #include <iostream>
 #include <Windows.h>
@@ -41,6 +42,25 @@ namespace Wanted
 
 		// Renderer에 Data 제출.
 		Renderer::Get().Submit(image, position, color, sortingOrder);
+	}
+
+
+	void Actor::Destroy()
+	{
+		// 삭제 flag 설정.
+		destroyRequested = true;
+
+		// 삭제 event 호출.
+		OnDestroy();
+	}
+
+	void Actor::OnDestroy()
+	{ }
+
+	void Actor::QuitGame()
+	{
+		// Engine 종료 요청.
+		Engine::Get().QuitEngine();
 	}
 
 	void Actor::SetPosition(const Vector2& newPosition)
