@@ -1,5 +1,8 @@
 #include "GameLevel.h"
 #include "Actor/Player.h"
+#include "Actor/Enemy.h"
+#include "Actor/PlayerBullet.h"
+#include "Actor/EnemyBullet.h"
 #include "Actor/EnemySpawner.h"
 
 GameLevel::GameLevel()
@@ -13,4 +16,94 @@ GameLevel::GameLevel()
 
 GameLevel::~GameLevel()
 {
+}
+
+void GameLevel::Tick(float deltaTime)
+{
+	super::Tick(deltaTime);
+
+	ProcessCollisionPlayerAndEnemyBullet();
+	ProcessCollisionPlayerBulletAndEnemy();
+}
+
+void GameLevel::ProcessCollisionPlayerBulletAndEnemy()
+{
+	// Filtering: Player Bullet과 Enemy Actor
+	std::vector<Actor*> bullets;
+	std::vector<Enemy*> enemies;
+
+	// Filtering Actor.
+	for (Actor* const actor : actors)
+	{
+		if (actor->IsTypeOf<PlayerBullet>())
+		{
+			bullets.emplace_back(actor);
+			continue;
+		}
+
+		if(actor->IsTypeOf<Enemy>())	
+		{
+			enemies.emplace_back(actor->As<Enemy>());
+		}
+	}
+
+	// 판정 안해도 되는지 확인.
+	if (bullets.size() == 0 || enemies.size() == 0)
+	{
+		return;
+	}
+
+	// 충돌 판정.
+	for (Actor* const bullet : bullets)
+	{
+		for (Enemy* const enemy : enemies)
+		{
+			// AABB 겹침 판정.
+			if (bullet->TestIntersect(enemy))
+			{
+				enemy->OnDamaged();
+				bullet->Destroy();
+
+				// TODO: 점수 추가.
+				continue;
+			}
+		}
+	}
+}
+
+void GameLevel::ProcessCollisionPlayerAndEnemyBullet()
+{
+	// Filtering Actor.
+	Player* player = nullptr;
+	std::vector<Actor*> bullets;
+	for (Actor* const actor : actors)
+	{
+		if (!player && actor->IsTypeOf<Player>())
+		{
+			player = actor->As<Player>();
+			continue;
+		}
+
+		if (actor->IsTypeOf<EnemyBullet>())
+		{
+			bullets.emplace_back(actor);
+		}
+	}
+
+	// 판정 처리 안해도 되는지 확인.
+	if (bullets.size() == 0 || !player)
+	{
+		return;
+	}
+
+	// 충돌 판정.
+	for (Actor* const bullet : bullets)
+	{
+		if (bullet->TestIntersect(player))
+		{
+			player->Destroy();
+			bullet->Destroy();
+			break;
+		}
+	}
 }
