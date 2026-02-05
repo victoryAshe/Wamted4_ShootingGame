@@ -109,6 +109,18 @@ namespace Wanted
 				{
 					mainLevel->ProcessAddAndDestroyActors();
 				}
+
+				// Level 전환 처리.
+				if(nextLevel)
+				{
+					// 기존 Level 제거.
+					SafeDelete(mainLevel);
+
+					// 전환할 Level을 mainLevel로 지정.
+
+					// pointer 정리.
+					nextLevel = nullptr;
+				}
 			}
 
 		}

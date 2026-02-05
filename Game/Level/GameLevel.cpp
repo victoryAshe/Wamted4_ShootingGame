@@ -4,6 +4,9 @@
 #include "Actor/PlayerBullet.h"
 #include "Actor/EnemyBullet.h"
 #include "Actor/EnemySpawner.h"
+#include "Actor/MouseTester.h"
+#include "Render/Renderer.h"
+#include "Engine/Engine.h"
 
 GameLevel::GameLevel()
 {
@@ -12,6 +15,9 @@ GameLevel::GameLevel()
 
 	// Add Enemy Spawner.
 	AddNewActor(new EnemySpawner());
+	
+	// Test: Add Mouse Tester.
+	AddNewActor(new MouseTester());
 }
 
 GameLevel::~GameLevel()
@@ -24,6 +30,32 @@ void GameLevel::Tick(float deltaTime)
 
 	ProcessCollisionPlayerAndEnemyBullet();
 	ProcessCollisionPlayerBulletAndEnemy();
+}
+
+void GameLevel::Draw()
+{
+	super::Draw();
+
+	if (isPlayerDead)
+	{
+		// Submit to Renderer: Player Dead Message.
+		Renderer::Get().Submit("!Dead!", playerDeadPosition);
+
+		// Show score.
+		ShowScore();
+
+		// Present Result Immediately.
+		Renderer::Get().PresentImmediately();
+
+		// Sleep: Pause Program
+		Sleep(2000);
+
+		// Quit Game.
+		Engine::Get().QuitEngine();
+	}
+
+	// Show Score.
+	ShowScore();
 }
 
 void GameLevel::ProcessCollisionPlayerBulletAndEnemy()
@@ -64,7 +96,8 @@ void GameLevel::ProcessCollisionPlayerBulletAndEnemy()
 				enemy->OnDamaged();
 				bullet->Destroy();
 
-				// TODO: 점수 추가.
+				// 점수 추가.
+				score += 1;
 				continue;
 			}
 		}
@@ -101,9 +134,24 @@ void GameLevel::ProcessCollisionPlayerAndEnemyBullet()
 	{
 		if (bullet->TestIntersect(player))
 		{
+			// Set Player Dead Flag.
+			isPlayerDead = true;
+
+			// Save Player Dead Position.
+			playerDeadPosition = player->GetPosition();
+
 			player->Destroy();
 			bullet->Destroy();
 			break;
 		}
 	}
+}
+
+void GameLevel::ShowScore()
+{
+	sprintf_s(scoreString, 128, "Score: %d", score);
+	Renderer::Get().Submit(
+		scoreString,
+		Vector2(0, Engine::Get().GetHeight() - 1)
+	);
 }

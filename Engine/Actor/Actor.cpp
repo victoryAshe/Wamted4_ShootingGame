@@ -95,6 +95,17 @@ namespace Wanted
 		return position.y == other->position.y;
 	}
 
+	void Actor::ChangeImage(const char* newImage)
+	{
+		// 기존 memory 해제.
+		SafeDeleteArray(image);
+
+		// 새로운 문자열 복사.
+		width = static_cast<int>(strlen(newImage));
+		image = new char[width + 1];
+		strcpy_s(image, width+1, newImage);
+	}
+
 	void Actor::SetPosition(const Vector2& newPosition)
 	{
 		// Renderer에 빈칸 그리기 요청.

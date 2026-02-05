@@ -15,7 +15,7 @@ namespace Wanted
 
 	public:
 		Actor(
-			const char* image = " ",
+			const char* image = "",
 			const Vector2& position = Vector2::Zero,
 			Color color = Color::White
 			);
@@ -37,6 +37,9 @@ namespace Wanted
 
 		// 충돌 여부 확인 함수.
 		bool TestIntersect(const Actor* const other);
+
+		// Actor의 Image값 변경 함수.
+		void ChangeImage(const char* newImage);
 
 		// 위치 변경 및 읽기 함수.
 		void SetPosition(const Vector2& newPosition);

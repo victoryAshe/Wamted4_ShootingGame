@@ -61,6 +61,9 @@ namespace Wanted
 			int sortingOrder = 0
 		);
 
+		// 즉시 화면에 표시할 때 사용.
+		void PresentImmediately();
+
 		// Singleton 접근 변수.
 		static Renderer& Get();
 

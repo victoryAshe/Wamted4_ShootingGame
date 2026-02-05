@@ -3,6 +3,7 @@
 #include "Engine/Engine.h"
 #include "Level/Level.h"
 #include "Actor/EnemyBullet.h"
+#include "Actor/EnemyDestroyEffect.h"
 
 Enemy::Enemy(const char* image, int yPosition)
 	:super(image)
@@ -88,6 +89,6 @@ void Enemy::OnDamaged()
 	// Actor delete.
 	Destroy();
 
-	// TODO: Effect 생성(재생을 위해).
-
+	// Effect 생성(재생을 위해).
+	GetOwner()->AddNewActor(new EnemyDestroyEffect(position));
 }

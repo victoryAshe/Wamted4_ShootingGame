@@ -5,7 +5,6 @@
 namespace Wanted
 {
 	// 전방 선언
-	class Level;
 	class Input;
 	class Renderer;
 
@@ -34,7 +33,7 @@ namespace Wanted
 		void QuitEngine();
 
 		// 새 level을 추가(설정)하는 함수.
-		void SetNewLevel(Level* newLevel);
+		void SetNewLevel(class Level* newLevel);
 
 		// 전역 접근 함수.
 		static Engine& Get();
@@ -78,6 +77,9 @@ namespace Wanted
 
 		// Main Level
 		class Level* mainLevel = nullptr;
+
+		// 전환될 Level을 임시 저장(caching)하는 변수.
+		class Level* nextLevel = nullptr;
 
 		// 전역 변수.
 		static Engine* instance;
